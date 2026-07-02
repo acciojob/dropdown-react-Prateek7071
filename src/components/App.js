@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Container, Box, Typography, Card, CardContent, Grid } from "@mui/material";
 import "./../styles/App.css";
 
 const states = [{
@@ -137,13 +136,12 @@ const states = [{
 	}]
 }];
 
+
 function App() {
-	// Setup state indices defaulting to 0 as required
 	const [stateIdx, setStateIdx] = useState(0);
 	const [cityIdx, setCityIdx] = useState(0);
 	const [landmarkIdx, setLandmarkIdx] = useState(0);
 
-	// Selectors for clarity
 	const currentState = states[stateIdx];
 	const currentCity = currentState?.city?.[cityIdx];
 	const currentLandmark = currentCity?.landmarks?.[landmarkIdx];
@@ -163,109 +161,63 @@ function App() {
 		setLandmarkIdx(Number(e.target.value));
 	};
 
-	const selectStyle = {
-		width: '100%',
-		padding: '10px',
-		borderRadius: '4px',
-		border: '1px solid #ccc',
-		fontSize: '1rem',
-		backgroundColor: '#fff',
-		cursor: 'pointer'
+	// Clean, embedded CSS styling to mimic a good layout without external CSS libraries
+	const styles = {
+		container: { padding: '20px', fontFamily: 'sans-serif', maxWidth: '800px', margin: '0 auto' },
+		dropdownGroup: { display: 'flex', gap: '15px', marginBottom: '30px', flexWrap: 'wrap' },
+		selectBox: { padding: '8px', minWidth: '150px', borderRadius: '4px', border: '1px solid #ccc' },
+		infoSection: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px' },
+		card: { padding: '15px', border: '1px solid #ddd', borderRadius: '6px', backgroundColor: '#fafafa' },
+		title: { margin: '0 0 5px 0', fontSize: '1.2rem', color: '#333' },
+		desc: { margin: '0', color: '#666', fontSize: '0.9rem', lineHeight: '1.4' }
 	};
 
 	return (
-		<div id="main">
-			<Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
-				<Typography variant="h4" component="h1" gutterBottom align="center" fontWeight="bold">
-					Dropdown React Location Explorer
-				</Typography>
+		<div id="main" style={styles.container}>
+			<h2>Dropdown Explorer</h2>
+			
+			<div style={styles.dropdownGroup}>
+				<select id="state" value={stateIdx} onChange={handleStateChange} style={styles.selectBox}>
+					{states.map((state, idx) => (
+						<option key={idx} value={idx}>{state.name}</option>
+					))}
+				</select>
 
-				{/* Dropdowns Section */}
-				<Box sx={{ bgcolor: '#f5f5f5', p: 3, borderRadius: 2, mb: 4, boxShadow: 1 }}>
-					<Grid container spacing={3}>
-						<Grid item xs={12} sm={4}>
-							<Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 'bold' }}>Select State</Typography>
-							<select id="state" value={stateIdx} onChange={handleStateChange} style={selectStyle}>
-								{states.map((state, index) => (
-									<option key={index} value={index}>{state.name}</option>
-								))}
-							</select>
-						</Grid>
+				<select id="city" value={cityIdx} onChange={handleCityChange} style={styles.selectBox}>
+					{currentState?.city?.map((city, idx) => (
+						<option key={idx} value={idx}>{city.name}</option>
+					))}
+				</select>
 
-						<Grid item xs={12} sm={4}>
-							<Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 'bold' }}>Select City</Typography>
-							<select id="city" value={cityIdx} onChange={handleCityChange} style={selectStyle}>
-								{currentState?.city?.map((city, index) => (
-									<option key={index} value={index}>{city.name}</option>
-								))}
-							</select>
-						</Grid>
+				<select id="landmark" value={landmarkIdx} onChange={handleLandmarkChange} style={styles.selectBox}>
+					{currentCity?.landmarks?.map((landmark, idx) => (
+						<option key={idx} value={idx}>{landmark.name}</option>
+					))}
+				</select>
+			</div>
 
-						<Grid item xs={12} sm={4}>
-							<Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 'bold' }}>Select Landmark</Typography>
-							<select id="landmark" value={landmarkIdx} onChange={handleLandmarkChange} style={selectStyle}>
-								{currentCity?.landmarks?.map((landmark, index) => (
-									<option key={index} value={index}>{landmark.name}</option>
-								))}
-							</select>
-						</Grid>
-					</Grid>
-				</Box>
+			<div style={styles.infoSection}>
+				{currentState && (
+					<div style={styles.card}>
+						<div id="state-name" style={styles.title}>{currentState.name}</div>
+						<div id="state-description" style={styles.desc}>{currentState.description}</div>
+					</div>
+				)}
 
-				{/* Selection Information Display Section */}
-				<Grid container spacing={3}>
-					{/* State Info */}
-					{currentState && (
-						<Grid item xs={12} md={4}>
-							<Card sx={{ height: '100%', borderTop: '4px solid #1976d2' }}>
-								<CardContent>
-									<Typography variant="overline" color="text.secondary">State</Typography>
-									<div id="state-name" style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '8px' }}>
-										{currentState.name}
-									</div>
-									<div id="state-description" style={{ fontSize: '0.875rem', color: '#555' }}>
-										{currentState.description}
-									</div>
-								</CardContent>
-							</Card>
-						</Grid>
-					)}
+				{currentCity && (
+					<div style={styles.card}>
+						<div id="city-name" style={styles.title}>{currentCity.name}</div>
+						<div id="city-description" style={styles.desc}>{currentCity.description}</div>
+					</div>
+				)}
 
-					{/* City Info */}
-					{currentCity && (
-						<Grid item xs={12} md={4}>
-							<Card sx={{ height: '100%', borderTop: '4px solid #388e3c' }}>
-								<CardContent>
-									<Typography variant="overline" color="text.secondary">City</Typography>
-									<div id="city-name" style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '8px' }}>
-										{currentCity.name}
-									</div>
-									<div id="city-description" style={{ fontSize: '0.875rem', color: '#555' }}>
-										{currentCity.description}
-									</div>
-								</CardContent>
-							</Card>
-						</Grid>
-					)}
-
-					{/* Landmark Info */}
-					{currentLandmark && (
-						<Grid item xs={12} md={4}>
-							<Card sx={{ height: '100%', borderTop: '4px solid #f57c00' }}>
-								<CardContent>
-									<Typography variant="overline" color="text.secondary">Landmark</Typography>
-									<div id="landmark-name" style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '8px' }}>
-										{currentLandmark.name}
-									</div>
-									<div id="landmark-description" style={{ fontSize: '0.875rem', color: '#555' }}>
-										{currentLandmark.description}
-									</div>
-								</CardContent>
-							</Card>
-						</Grid>
-					)}
-				</Grid>
-			</Container>
+				{currentLandmark && (
+					<div style={styles.card}>
+						<div id="landmark-name" style={styles.title}>{currentLandmark.name}</div>
+						<div id="landmark-description" style={styles.desc}>{currentLandmark.description}</div>
+					</div>
+				)}
+			</div>
 		</div>
 	);
 }
